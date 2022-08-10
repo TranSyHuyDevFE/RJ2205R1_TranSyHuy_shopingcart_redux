@@ -1,24 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import Product from "./Product/index";
+import Cart from "./Cart/index";
+import axios from "axios";
+import { Provider } from "react-redux";
+import store from "./store";
+import "./App.css";
 
 function App() {
+  const [product, setProduct] = useState([]);
+  useEffect(() => {
+    axios({
+      method: "get",
+      url: "http://localhost:3001/api/users",
+    })
+      .then((res) => {
+        setProduct(res.data);
+      })
+      .catch((err) => {
+        throw err;
+      });
+  });
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <div className="container d-flex">
+        {product.map((item) => (
+          <Product
+            key={item.id}
+            id={item.id}
+            name={item.name}
+            price={item.price}
+            quantity={item.quantity}
+          />
+        ))}
+      </div>
+      <div>
+        <Cart />
+      </div>
+    </Provider>
   );
 }
 
